@@ -3,6 +3,7 @@ from flask_cors import CORS
 from visualcrossingapi import get_weather_from_visual_crossing
 from datetime import date
 from dotenv import load_dotenv
+from gemini import get_activity_suggestions
 
 load_dotenv()  # take environment variables from .env.
 
@@ -26,6 +27,13 @@ def get_daily_weather_list(city, fra_dato, til_dato):
 
     return jsonify(dict_list)
 
+
+@app.route('/by/<city>/<fra_dato>/<til_dato>/forslag')
+def get_activity_suggestions_endpoint(city, fra_dato, til_dato):
+    weather_list = get_weather_from_visual_crossing(str(city), str(fra_dato), str(til_dato))
+    weather_dicts = [vars(w) for w in weather_list]
+    suggestions = get_activity_suggestions(str(city), weather_dicts)
+    return jsonify(suggestions)
 
 
 # bruker flask 
