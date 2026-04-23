@@ -30,7 +30,11 @@ def get_daily_weather_list(city, fra_dato, til_dato):
 
 @app.route('/by/<city>/<fra_dato>/<til_dato>/forslag')
 def get_activity_suggestions_endpoint(city, fra_dato, til_dato):
-    weather_list = get_weather_from_visual_crossing(str(city), str(fra_dato), str(til_dato))
+    try:
+        weather_list = get_weather_from_visual_crossing(str(city), str(fra_dato), str(til_dato))
+    except Exception as e:
+        print(f"[forslag] weather fetch failed: {e}")
+        return jsonify({"error": "Kunne ikke hente værdata"}), 502
     weather_dicts = [vars(w) for w in weather_list]
     suggestions = get_activity_suggestions(str(city), weather_dicts)
     return jsonify(suggestions)
